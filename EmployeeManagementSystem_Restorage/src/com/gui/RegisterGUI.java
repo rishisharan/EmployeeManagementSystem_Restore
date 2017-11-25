@@ -92,7 +92,7 @@ public class RegisterGUI {
 		genderLabel = new JLabel("Gender"); 
 		genderLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		genderLabel.setBounds(100, 380, 150, 40);
-		
+		registerPanel.add(genderLabel);
 		maleLabel = new JLabel("Male"); 
 		maleLabel.setFont(new Font("Dialog", Font.BOLD, 20));
 		maleLabel.setBounds(350, 380, 150, 40);
@@ -129,7 +129,7 @@ public class RegisterGUI {
 
 			getUserInformation();
 			validation();
-//			registerUserData();
+			registerUserData();
 
 			}
 
@@ -219,5 +219,28 @@ public class RegisterGUI {
 			}
 		}
 	}
+	public void registerUserData()
+	{
+		try
+		{
+			if(count==1)
+			{
+				Class.forName("com.mysql.jdbc.Driver");
+				con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employeems","root","system");
+				stmt = con.createStatement();
+				stmt.execute("INSERT INTO employee (firstname,lastname,password,phone,gender) VALUES('"+firstName+"','"+lastName+"','"+createPassword+"','"+phone+"','"+gender+"')");
+				stmt.close();
+				con.close();
+				JOptionPane.showMessageDialog(null,"Registered Successfully");
+			}
+
+		}
+		catch (Exception e) 
+		{
+				System.out.println("Exception1 is " + e);
+		}	
+	}
+		
+	
 
 }
