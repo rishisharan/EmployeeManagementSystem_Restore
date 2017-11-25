@@ -3,6 +3,8 @@ package com.gui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.*;
 
 import javax.swing.*;
@@ -21,7 +23,9 @@ public class RegisterGUI {
     JRadioButton male, female;
     ButtonGroup bg;
     JPanel registerPanel;
-	public RegisterGUI() 
+    String firstName,lastName,gender,createPassword,confirmPassword,phone;
+	int count =0;
+    public RegisterGUI() 
 	{
 		
 		registerFrame=new javax.swing.JFrame("Registration Form");
@@ -54,7 +58,6 @@ public class RegisterGUI {
 		lastNameTextBox = new JTextField(); 
 		lastNameTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
 		lastNameTextBox.setBounds(350, 140, 180, 30);
-		lastNameTextBox.setEnabled(false);
 		registerPanel.add(lastNameTextBox);
 		
 		createPasswordLabel = new JLabel("Create Password"); 
@@ -64,8 +67,7 @@ public class RegisterGUI {
 	    createPasswordTextBox = new JPasswordField(); 
 	    createPasswordTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
 	    createPasswordTextBox.setBounds(350, 200, 180, 30);
-	    createPasswordTextBox.setEnabled(false);
-		registerPanel.add(createPasswordTextBox);
+	    registerPanel.add(createPasswordTextBox);
 		
 		confirmPasswordLabel = new JLabel("Confirm Password"); 
 		confirmPasswordLabel.setFont(new Font("Dialog", Font.BOLD, 16));
@@ -74,8 +76,7 @@ public class RegisterGUI {
 	    confirmPasswordTextBox = new JPasswordField(); 
 	    confirmPasswordTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
 	    confirmPasswordTextBox.setBounds(350, 260, 180, 30);
-	    confirmPasswordTextBox.setEnabled(false);
-		registerPanel.add(confirmPasswordTextBox);
+	    registerPanel.add(confirmPasswordTextBox);
 			    
 
 		phoneLabel = new JLabel("Phone"); 
@@ -85,8 +86,7 @@ public class RegisterGUI {
 	    phoneTextBox = new JTextField(); 
 	    phoneTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
 	    phoneTextBox.setBounds(350, 320, 180, 30);
-	    phoneTextBox.setEnabled(false);
-		registerPanel.add(phoneTextBox);
+	    registerPanel.add(phoneTextBox);
 		
 		
 		genderLabel = new JLabel("Gender"); 
@@ -117,14 +117,36 @@ public class RegisterGUI {
 		jb.add(male);
 		jb.add(female);
 
-
-		
 		// Defining Register Button
         registerButton = new JButton("Register");
 		registerButton.setFont(new Font("Dialog", Font.BOLD, 16));
 		registerButton.setBounds(100,450,100,30);
 		registerPanel.add(registerButton);
+		registerButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent event)
+			{
 
+			getUserInformation();
+			validation();
+//			registerUserData();
+
+			}
+
+		});
+		male.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			gender = "M";
+			}
+			});
+		female.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			gender = "F";
+			}
+		});
+
+
+		
 
 		// Defining Register Button
         clearButton = new JButton("Clear");
@@ -146,6 +168,56 @@ public class RegisterGUI {
 
         
 		
+	}
+	public void getUserInformation() {
+		firstName = firstNameTextBox.getText();
+		lastName = lastNameTextBox.getText();
+		createPassword = createPasswordTextBox.getText();
+		confirmPassword = confirmPasswordTextBox.getText();
+		phone=phoneTextBox.getText();
+		
+	}
+	public void validation()
+	{
+		count=0;
+		if(firstName.equals(""))
+		{
+			JOptionPane.showMessageDialog(null,"Enter Firstname");
+		}
+		else if(lastName.equals(""))
+		{
+			JOptionPane.showMessageDialog(null,"Enter Lastame");
+		}
+		else if(createPassword.equals(""))
+		{
+			JOptionPane.showMessageDialog(null,"Enter Create password");
+		}
+		else if(confirmPassword.equals(""))
+		{
+			JOptionPane.showMessageDialog(null,"Enter Confirm password");
+		}
+		else if(phone.equals(""))
+		{
+			JOptionPane.showMessageDialog(null,"Enter Mobile Number");
+		}
+		else if(gender.equals(""))
+		{
+			JOptionPane.showMessageDialog(null,"Select Gender");
+		}
+		else if(phone.length()<10||phone.length()>10){
+			JOptionPane.showMessageDialog(null,"Phone number should be of length 10");
+		}
+		else 
+		{
+			if(createPassword.equals(confirmPassword))
+			{
+				System.out.println("Password matched, all validations successfull");
+				count=1;
+			}
+			else{
+				JOptionPane.showMessageDialog(null,"Password mismatch");	
+			}
+		}
 	}
 
 }
