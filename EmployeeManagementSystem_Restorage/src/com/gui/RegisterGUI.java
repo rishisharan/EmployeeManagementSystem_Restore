@@ -160,7 +160,6 @@ public class RegisterGUI {
         exitButton.setBounds(400,450,100,30);
 		registerPanel.add(exitButton);
         registerFrame.add(registerPanel);
-		registerFrame.setSize(700,700);  
 		registerFrame.setLayout(null);  
 		registerFrame.setVisible(true);
 		
