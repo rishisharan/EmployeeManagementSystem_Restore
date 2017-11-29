@@ -100,8 +100,14 @@ public class MainDashBoardGUI {
             	// getEmployeeInformation();
             	 String password = String.valueOf(passwordTextBox.getPassword());
             	 try {
-					mainController=new MainController(userNameTextBox.getText(),password);
-				} catch (SQLException e) {
+					mainController=new MainController();
+					if(mainController.checkUser(userNameTextBox.getText(),password)==true){
+					JOptionPane.showMessageDialog(null, "Clocked In/Out");
+					}
+					else{
+						JOptionPane.showMessageDialog(null, "Invalid User name and Password");	
+					}
+            	 } catch (SQLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
