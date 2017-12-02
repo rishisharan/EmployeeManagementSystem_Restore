@@ -80,7 +80,7 @@ public class MainDashBoardGUI {
  		passwordTextBox.setBounds(250,120,180,30);
  		employeePanel.add(passwordTextBox);
  	      
- 		clockInClockOutButton = new JButton("Clock In");
+ 		clockInClockOutButton = new JButton("Clock In/Out");
  		clockInClockOutButton.setFont(new Font("Dialog", Font.BOLD, 16));
  		clockInClockOutButton.setBounds(100,210,100,30);
  		employeePanel.add(clockInClockOutButton);
