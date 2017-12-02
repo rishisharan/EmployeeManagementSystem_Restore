@@ -3,6 +3,7 @@ package com.gui;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
@@ -16,6 +17,7 @@ public class RegisterGUI {
 	Connection con;
     Statement stmt;
     PreparedStatement preStatement;
+    ResultSet res;
     JLabel registerLabel,firstNameLabel, lastNameLabel,genderLabel,phoneLabel,createPasswordLabel,confirmPasswordLabel,maleLabel,femaleLabel;
     JTextField firstNameTextBox, lastNameTextBox,phoneTextBox;
     JPasswordField createPasswordTextBox,confirmPasswordTextBox;
@@ -27,6 +29,15 @@ public class RegisterGUI {
 	int count =0;
     public RegisterGUI() 
 	{
+    	try {
+			connect();
+		} catch (ClassNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		registerFrame=new javax.swing.JFrame("Registration Form");
 		registerPanel=new javax.swing.JPanel();
@@ -128,7 +139,15 @@ public class RegisterGUI {
 			{
 
 			getUserInformation();
-			validation();
+			try {
+				validation();
+			} catch (HeadlessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			registerUserData();
 
 			}
@@ -176,7 +195,7 @@ public class RegisterGUI {
 		phone=phoneTextBox.getText();
 		
 	}
-	public void validation()
+	public void validation() throws HeadlessException, SQLException
 	{
 		count=0;
 		if(firstName.equals(""))
@@ -206,6 +225,9 @@ public class RegisterGUI {
 		else if(phone.length()<10||phone.length()>10){
 			JOptionPane.showMessageDialog(null,"Phone number should be of length 10");
 		}
+		else if(checkIfUserNameIsInUse(firstName)==true){
+			JOptionPane.showMessageDialog(null,"Your login Id is your firstname, already in use");
+		}
 		else 
 		{
 			if(createPassword.equals(confirmPassword))
@@ -218,15 +240,26 @@ public class RegisterGUI {
 			}
 		}
 	}
+	public void connect() throws ClassNotFoundException, SQLException{
+		Class.forName("com.mysql.jdbc.Driver");
+		con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employeems","root","system");
+		stmt = con.createStatement();	
+	}
+	public boolean checkIfUserNameIsInUse(String firstname) throws SQLException{
+		
+		String checkIfUserNameIsInUse="select firstname from employee where firstname='"+firstname+"'";
+    	res = stmt.executeQuery(checkIfUserNameIsInUse);
+    	if(res.first()){
+		return true;
+    	}
+    	return false;
+	}
 	public void registerUserData()
 	{
 		try
 		{
 			if(count==1)
 			{
-				Class.forName("com.mysql.jdbc.Driver");
-				con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employeems","root","system");
-				stmt = con.createStatement();
 				stmt.execute("INSERT INTO employee (firstname,lastname,password,phone,gender) VALUES('"+firstName+"','"+lastName+"','"+createPassword+"','"+phone+"','"+gender+"')");
 				stmt.close();
 				con.close();
