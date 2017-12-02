@@ -43,13 +43,14 @@ public class RegisterGUI {
 		registerPanel=new javax.swing.JPanel();
 		registerFrame.add(registerPanel);
 		registerPanel.setLayout(null);
-		registerFrame.setSize(970,700);
+		registerFrame.setSize(650,600);
 		registerFrame.show();
+		registerFrame.setResizable(false);
 		
 	    
 		registerLabel=new javax.swing.JLabel("Registration Form");
 		registerLabel.setFont(new Font("Dialog", Font.ITALIC, 24));
-		registerLabel.setBounds(300,20,400,40);
+		registerLabel.setBounds(200,20,400,40);
 		registerPanel.add(registerLabel);
 	    registerPanel.add(registerLabel);
 
@@ -172,6 +173,14 @@ public class RegisterGUI {
         clearButton.setFont(new Font("Dialog", Font.BOLD, 16));
         clearButton.setBounds(250,450,100,30);
 		registerPanel.add(clearButton);
+		clearButton.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0) {
+                  // calling method resetFields()
+                  resetFields();
+                  registerButton.setEnabled(true);
+                  
+            }
+		});
 
 		// Defining Register Button
         exitButton = new JButton("Exit");
@@ -181,10 +190,30 @@ public class RegisterGUI {
         registerFrame.add(registerPanel);
 		registerFrame.setLayout(null);  
 		registerFrame.setVisible(true);
-		
+		 exitButton.addActionListener(new ActionListener(){
+             public void actionPerformed(ActionEvent arg0) {
+                   try{
+                         con.close();
+                         registerFrame.dispose();
+                         
+                   }catch(Exception ex){
+                          System.out.println(ex.getMessage());
+                   }
+             }
+		 });
         
 
         
+		
+	}
+    public void resetFields(){
+		firstNameTextBox.setText("");
+		lastNameTextBox.setText("");
+		phoneTextBox.setText("");
+		createPasswordTextBox.setText("");
+		confirmPasswordTextBox.setText("");
+		male.setText("");
+		female.setText("");
 		
 	}
 	public void getUserInformation() {
