@@ -30,12 +30,18 @@ public class MainDashBoardGUI {
 	public MainDashBoardGUI() 
 	{
 		// TODO Auto-generated constructor stub
-		 mainDashBoardFrame= new JFrame("Employee Management System");  
+
+		 mainDashBoardFrame=new javax.swing.JFrame("Employee Management System");
 		 employeePanel=new javax.swing.JPanel();
-	     employeePanel.setLayout(null);
-	     employeePanel.setVisible(true);
-	     employeePanel.setSize(600,600);
-	   
+		 mainDashBoardFrame.add(employeePanel);
+		 employeePanel.setLayout(null);
+		 mainDashBoardFrame.setSize(550,500);
+		 mainDashBoardFrame.show();
+		 mainDashBoardFrame.setResizable(false);
+			
+			
+
+  
          mainDashBoardFrame.add(employeePanel);
 	     
          JMenuBar mb=new JMenuBar();  
@@ -45,13 +51,12 @@ public class MainDashBoardGUI {
          menu.add(admin); menu.add(register);  
          mb.add(menu);  
          mainDashBoardFrame.setJMenuBar(mb);  
-         mainDashBoardFrame.setSize(970,700);  
-         mainDashBoardFrame.setLayout(null);  
-         mainDashBoardFrame.setVisible(true);  
+ 
+           
          
          banner=new javax.swing.JLabel("Employee Login");
          banner.setFont(new Font("Dialog", Font.ITALIC, 24));
-         banner.setBounds(400, 25, 200, 30);
+         banner.setBounds(150, 25, 200, 30);
          employeePanel.add(banner);
         
          
@@ -62,7 +67,7 @@ public class MainDashBoardGUI {
  		employeePanel.add(userNameLabel);
  		userNameTextBox=new javax.swing.JTextField();
  		userNameTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
- 		userNameTextBox.setBounds(350,80,180,30);
+ 		userNameTextBox.setBounds(250,80,180,30);
  		employeePanel.add(userNameTextBox);
  	     
  	
@@ -72,14 +77,15 @@ public class MainDashBoardGUI {
  		employeePanel.add(passwordLabel);
  		passwordTextBox=new javax.swing.JPasswordField();
  		passwordTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
- 		passwordTextBox.setBounds(350,140,180,30);
+ 		passwordTextBox.setBounds(250,120,180,30);
  		employeePanel.add(passwordTextBox);
  	      
- 		clockInClockOutButton = new JButton("Sign In");
+ 		clockInClockOutButton = new JButton("Clock In");
  		clockInClockOutButton.setFont(new Font("Dialog", Font.BOLD, 16));
- 		clockInClockOutButton.setBounds(350,250,100,30);
+ 		clockInClockOutButton.setBounds(100,210,100,30);
  		employeePanel.add(clockInClockOutButton);
  	    
+ 		mainDashBoardFrame.setVisible(true);
          admin.addActionListener(new ActionListener(){
              public void actionPerformed(ActionEvent a) {
                    // calling method resetFields()
@@ -96,8 +102,8 @@ public class MainDashBoardGUI {
          
          clockInClockOutButton.addActionListener(new ActionListener(){
              public void actionPerformed(ActionEvent an) {
-                 // calling method resetFields()
-            	// getEmployeeInformation();
+                 
+            
             	 String password = String.valueOf(passwordTextBox.getPassword());
             	 try {
 					mainController=new MainController();
