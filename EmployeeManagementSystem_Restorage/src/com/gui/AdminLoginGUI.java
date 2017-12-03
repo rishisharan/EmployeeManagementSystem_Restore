@@ -33,7 +33,7 @@ public class AdminLoginGUI {
 		adminPanel=new javax.swing.JPanel();
 		adminLoginFrame.add(adminPanel);
 		adminPanel.setLayout(null);
-//		adminLoginFrame.setSize(970,700);
+
 		adminLoginFrame.setSize(550,450);
 		adminLoginFrame.show();
 		adminLoginFrame.setResizable(false);
