@@ -33,13 +33,15 @@ public class AdminLoginGUI {
 		adminPanel=new javax.swing.JPanel();
 		adminLoginFrame.add(adminPanel);
 		adminPanel.setLayout(null);
-		adminLoginFrame.setSize(970,700);
+//		adminLoginFrame.setSize(970,700);
+		adminLoginFrame.setSize(550,450);
 		adminLoginFrame.show();
+		adminLoginFrame.setResizable(false);
 		
 	    
 		banner=new javax.swing.JLabel("Admin Login");
 		banner.setFont(new Font("Dialog", Font.ITALIC, 24));
-		banner.setBounds(300,20,400,40);
+		banner.setBounds(200,20,400,40);
 		adminPanel.add(banner);
 	    
 		userNameLabel=new javax.swing.JLabel("User name");
@@ -48,7 +50,7 @@ public class AdminLoginGUI {
 		adminPanel.add(userNameLabel);
 		userNameTextBox=new javax.swing.JTextField();
 		userNameTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
-		userNameTextBox.setBounds(350,80,180,30);
+		userNameTextBox.setBounds(250,80,180,30);
 		adminPanel.add(userNameTextBox);
 	      
 		passwordNameLabel = new JLabel("Password"); 
@@ -57,13 +59,13 @@ public class AdminLoginGUI {
 		adminPanel.add(passwordNameLabel);
 		passwordTextBox = new JPasswordField(); 
 		passwordTextBox.setFont(new Font("Dialog", Font.BOLD, 16));
-		passwordTextBox.setBounds(350, 140, 180, 30);
+		passwordTextBox.setBounds(250, 140, 180, 30);
 		adminPanel.add(passwordTextBox);
 		
 		
 
 		// Defining Register Button
-		loginButton = new JButton("Register");
+		loginButton = new JButton("Login");
 		loginButton.setFont(new Font("Dialog", Font.BOLD, 16));
 		loginButton.setBounds(100,200,100,30);
 		adminPanel.add(loginButton);
