@@ -38,7 +38,7 @@ public class AdminDashBoardGUI extends JFrame
 		JTable table;
 		DefaultTableModel model;
 		JScrollPane scrollpane;
-		
+		ViewHistoryGUI obj;
 		
 	    ResultSet rst,rstLast;
 	    Object[][] data;
@@ -129,8 +129,8 @@ public class AdminDashBoardGUI extends JFrame
 		      setVisible(true);
 		      viewHistoryButton.addActionListener(new ActionListener(){
 		             public void actionPerformed(ActionEvent a) {
-		                
-		                  
+		                  int temp_employee_id=Integer.parseInt(employee_id);
+		                  obj=new ViewHistoryGUI(temp_employee_id);
 		             }
 		     });
 		      
@@ -176,8 +176,6 @@ public class AdminDashBoardGUI extends JFrame
 		              con =DriverManager.getConnection(
 		                              "jdbc:mysql://localhost:3306/employeems","root","system");
 		              stmt = con.createStatement();
-//		              preStatement = con.prepareStatement("insert into regForm(
-//		                                 name,gender,address,contact) values(?,?,?,?)");
 		        }catch(Exception e){
 		              System.out.print(e.getMessage());
 		        }

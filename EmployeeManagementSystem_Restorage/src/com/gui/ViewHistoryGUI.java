@@ -162,46 +162,62 @@ public class ViewHistoryGUI extends JFrame {
 		 Date newDate = subtractDays(date, 30);
 		 SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
 		 int dayByOne=1;
-		 while(newDate.before(date)||newDate.equals(date))
-		 {
-			 String new_date=formatter.format(newDate);
-			 String format_current_date=formatter.format(date);
+		 
+		 //code to fetch records from current date to 30 days before date
+//		 while(newDate.before(date)||newDate.equals(date))
+//		 {
+//			 String new_date=formatter.format(newDate);
+//			 String format_current_date=formatter.format(date);
 //			 String getTotalHoursByDate="SELECT  employee.id, employee.firstname, daily_attendance.clock_in_date, daily_attendance.total_hours_minutes FROM employee INNER JOIN daily_attendance ON employee.id = daily_attendance.id WHERE   employee.id= '"+employeee_id+"' and clock_in_date='"+new_date+"' and flag='X';";		 
 //			 res = stmt.executeQuery(getTotalHoursByDate);
 //			 while(res.next())
 //			 { 
-//				 calculateTotalHoursMinutesWorkedOnADay(dayByOne, res.getInt("id")+","+res.getString("firstname")+","+res.getString("clock_in_date")+","+res.getString("total_hours_minutes"), getTotalHoursByDate, getTotalHoursByDate);
-				 
-		//		 String ing =res.getInt("id")+","+res.getString("firstname")+","+res.getString("clock_in_date")+","+res.getString("total_hours_minutes");  
-//				 calculateTotalHoursMinutesWorkedOnADay();
-				 
-//				 row = ing.split(",");
-				 
-//        	String count="select * from "     	
-				 
-				 
+//				 int temp_emp_id=res.getInt("id");
+//				 String temp_first_name=res.getString("firstname");
+//				 String temp_clock_in_date=res.getString("clock_in_date");
+//				 String temp_tthm=res.getString("total_hours_minutes");
+//				calculateTotalHoursMinutesWorkedOnADay(temp_emp_id,temp_first_name,temp_clock_in_date,temp_tthm);
+//				 String ing =temp_emp_id+","+temp_first_name+","+temp_clock_in_date+","+totalHoursPerDay;  
+//				 row = ing.split(",");	
 //				 viewHistorymodel.addRow(row);
-//			 }
-			 newDate=incrementDayByOne(newDate,dayByOne);
-		}
+			 //}
+			 //newDate=incrementDayByOne(newDate,dayByOne);
+//		}
 		
 	 }
-	 public void calculateTotalHoursMinutesWorkedOnADay(int emp_id, String emp_firstname,String clock_in_date, String total_hours_minutes) throws SQLException 
+	 public String calculateTotalHoursMinutesWorkedOnADay(int temp_emp_id, String temp_emp_firstname,String temp_clock_in_date, String total_hours_minutes) throws SQLException 
 	 {
-		 String fetchTotalHoursWorked="select total_hours_minutes from daily_attendance where '"+emp_id+"' and clock_in_date='"+clock_in_date+"'";
+		 String fetchTotalHoursWorked="select total_hours_minutes from daily_attendance where '"+temp_emp_id+"' and clock_in_date='"+temp_clock_in_date+"' and flag='X'";
 		 res = stmt.executeQuery(fetchTotalHoursWorked);
 		 ArrayList<String> timestampsList = new ArrayList<String>();
 		 while(res.next()){
 			 timestampsList.add(res.getString("total_hours_minutes"));
 			 
 		 }
-		    for (String tmp : timestampsList){
-	            System.out.println(tmp);
+		 for (String tmp : timestampsList){
+	            System.out.println("Time worked"+tmp);
+	     }
+		 long tm = 0;
+	        for (String tmp : timestampsList){
+	            String[] arr = tmp.split(":");
+	          
+	            tm += 60 * Integer.parseInt(arr[1]);
+	            tm += 3600 * Integer.parseInt(arr[0]);
 	        }
 
-
-		 
+	        long hh = tm / 3600;
+	        tm %= 3600;
+	        long mm = tm / 60;
+	        tm %= 60;
+	        long ss = tm;
+	        System.out.println("Date"+temp_clock_in_date+"  "+format(hh) + ":" + format(mm));
+	        String total=String.valueOf(hh)+":"+String.valueOf(mm);
+	        System.out.println(total);
+	        String updateFlag="update daily_attendance SET flag='D' where id=(select id from employee where firstname='"+temp_emp_id+ "' and clock_in_date='"+temp_clock_in_date+"')";
+    		stmt.executeUpdate(updateFlag);
+	        return total;
 	 }
+	 
 	 public static Date incrementDayByOne(Date date, int days) {
 			GregorianCalendar cal = new GregorianCalendar();
 			cal.setTime(date);
@@ -222,11 +238,15 @@ public class ViewHistoryGUI extends JFrame {
 	              con =DriverManager.getConnection(
 	                              "jdbc:mysql://localhost:3306/employeems","root","system");
 	              stmt = con.createStatement();
-//	              preStatement = con.prepareStatement("insert into regForm(
-//	                                 name,gender,address,contact) values(?,?,?,?)");
+
 	        }catch(Exception e){
 	              System.out.print(e.getMessage());
 	        }
 	 }
+	 private static String format(long s){
+	        if (s < 10) return "0" + s;
+	        else return "" + s;
+	    }
+	
 
 }

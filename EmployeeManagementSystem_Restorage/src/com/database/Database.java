@@ -5,6 +5,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 
 public class Database {
@@ -23,7 +24,7 @@ public class Database {
 	// time format, i.e. 8:42 AM
     SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
     
-    private Database() {
+    public Database() {
 		// TODO Auto-generated constructor stub
 		String url= "jdbc:mysql://localhost:3306/";
         String dbName = "employeems";
@@ -116,7 +117,7 @@ public class Database {
     	if(res.first()){
     		
     		String clockInDate = res.getString("clock_in_date");
-//    		String clockInTime = res.getString("clock_in_time");
+
     		Long clockInTime = res.getLong("clock_in_time");
     		
     		String clockOutDate = res.getString("clock_out_date");
@@ -132,17 +133,19 @@ public class Database {
 			// http://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
 			int minutes = (int) ((compTimeWorked / (1000*60)) % 60);
 			int hours   = (int) ((compTimeWorked / (1000*60*60)) % 24);
-			humanTimeWorked = String.format("%dh %dm", hours, minutes);
-//    		System.out.println("emplo enterd"+clockInDate);	
-//    		System.out.println("emplo enterd time"+timeFormat.format(compStartTimes));	
+			humanTimeWorked = String.format("%d: %d", hours, minutes);
+
     		System.out.println("Clocked out on "+clockOutDate);	
-//    		System.out.println("Clocked out at time "+timeFormat.format(compEndTimes));	
+
     		System.out.println("Total hours worked "+humanTimeWorked);	
     		String saveTotalTimeWorked="update daily_attendance SET flag='X',total_hours_minutes='"+humanTimeWorked+"' where id=(select id from employee where firstname='"+uname+ "' and flag='O')";
     		statement.executeUpdate(saveTotalTimeWorked);
+    		
     	}
     	return null;
     }
+
+    
     public boolean checkIfAlreadyClockedIn(String username3) throws SQLException{
     	
     	String checkIfAlreadyClockedIn="select * from daily_attendance where id=(select id from employee where firstname='"+username3+"' and flag='N')";
