@@ -42,7 +42,7 @@ public class ViewHistoryGUI extends JFrame {
 		// TODO Auto-generated method stub
 		
 	}
-	JLabel fromDateLabel,endDateLabel;
+	JLabel fromDateLabel,endDateLabel,totalHoursWorkedLabel,totalHoursWorkedValueLabel;
 	JTextField fromDateField,endDateField;
 	JButton searchButton;
 	
@@ -71,16 +71,22 @@ public class ViewHistoryGUI extends JFrame {
 	      fromDateLabel.setBounds(15, 50, 130, 30);
 	      
 	      // fromDate field
-	      fromDateField = new JTextField(); 
+	      fromDateField = new JTextField("yyyy-mm-d"); 
 	      fromDateField.setBounds(95, 50, 130, 30);
-	     
+	      
 	
 	      endDateLabel = new JLabel("To Date"); 
 	      endDateLabel.setBounds(15, 85, 130, 30);
 	      // endDateField
-	      endDateField = new JTextField(); 
+	      endDateField = new JTextField("yyyy-mm-d"); 
 	      endDateField.setBounds(95, 85, 130, 30);         
 	
+	      //Totallabel
+	      totalHoursWorkedLabel = new JLabel("Total Hours Worked:"); 
+	      totalHoursWorkedLabel.setBounds(15, 155, 130, 30);
+	      totalHoursWorkedValueLabel = new JLabel(); 
+	      totalHoursWorkedValueLabel.setBounds(15, 180, 130, 30);
+	      
 	      
 	      add(fromDateLabel);
 	      add(endDateLabel);
@@ -88,6 +94,8 @@ public class ViewHistoryGUI extends JFrame {
 	      // fixing all Label,TextField,RadioButton
 	      add(fromDateField);
 	      add(endDateField);
+	      add(totalHoursWorkedLabel);
+	      add(totalHoursWorkedValueLabel);
 	      
 	      // Defining search Button
 	      searchButton = new JButton("Search"); 
@@ -139,18 +147,45 @@ public class ViewHistoryGUI extends JFrame {
 	      searchButton.addActionListener(new ActionListener(){
 	             public void actionPerformed(ActionEvent a) {
 	                   // calling method resetFields()
-	            	 System.out.println("Searching..");
+	            	 
 	            	 String start_date=fromDateField.getText();
 	            	 String end_date=endDateField.getText();
-	            	 fetchRecordsBasedOnDates(start_date,end_date);
+	            	 try {
+						fetchRecordsBasedOnDates(start_date,end_date,employeee_id);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 	                  
 	             }
 	     });
 	      
 
 	}
-	public void fetchRecordsBasedOnDates(String start_date,String end_date){
-		String fetchBasedOnDates="select * from daily attendance where clock_in_date='"+start_date+"', clock_out_date='"+end_date+"' and id=12";
+	public void fetchRecordsBasedOnDates(String start_date,String end_date,int employeee_id) throws SQLException{
+	
+		String fetchBasedOnDates="select * from daily_attendance where id='"+employeee_id+"' and clock_in_date and clock_out_date between '"+start_date+"' and '"+end_date+"'";
+		String getFirstName="select firstname from employee where id='"+employeee_id+"'";
+		res = stmt.executeQuery(getFirstName);
+		res.next();
+		String temp_first_name=res.getString("firstname");
+		res = stmt.executeQuery(fetchBasedOnDates);
+		int rows = viewHistorymodel.getRowCount();	
+		for(int i = rows - 1; i >=0; i--)
+		 {
+			 viewHistorymodel.removeRow(i); 
+		 }
+		while(res.next())
+		 { 
+			 int temp_emp_id=res.getInt("id");
+			 String temp_clock_in_date=res.getString("clock_in_date");
+			 String temp_tthm=res.getString("total_hours_minutes");
+			 String ing =temp_emp_id+","+temp_first_name+","+temp_clock_in_date+","+temp_tthm;  
+			 row = ing.split(",");	
+			 viewHistorymodel.addRow(row);
+		 }
+		calculateTotalHoursMinutesWorkedOnADay(employeee_id, temp_first_name, start_date, end_date);
+	
 	}
 	 public void loadRecords() throws SQLException
 	 {
@@ -164,30 +199,29 @@ public class ViewHistoryGUI extends JFrame {
 		 int dayByOne=1;
 		 
 		 //code to fetch records from current date to 30 days before date
-//		 while(newDate.before(date)||newDate.equals(date))
-//		 {
-//			 String new_date=formatter.format(newDate);
-//			 String format_current_date=formatter.format(date);
-//			 String getTotalHoursByDate="SELECT  employee.id, employee.firstname, daily_attendance.clock_in_date, daily_attendance.total_hours_minutes FROM employee INNER JOIN daily_attendance ON employee.id = daily_attendance.id WHERE   employee.id= '"+employeee_id+"' and clock_in_date='"+new_date+"' and flag='X';";		 
-//			 res = stmt.executeQuery(getTotalHoursByDate);
-//			 while(res.next())
-//			 { 
-//				 int temp_emp_id=res.getInt("id");
-//				 String temp_first_name=res.getString("firstname");
-//				 String temp_clock_in_date=res.getString("clock_in_date");
-//				 String temp_tthm=res.getString("total_hours_minutes");
-//				calculateTotalHoursMinutesWorkedOnADay(temp_emp_id,temp_first_name,temp_clock_in_date,temp_tthm);
-//				 String ing =temp_emp_id+","+temp_first_name+","+temp_clock_in_date+","+totalHoursPerDay;  
-//				 row = ing.split(",");	
-//				 viewHistorymodel.addRow(row);
-			 //}
-			 //newDate=incrementDayByOne(newDate,dayByOne);
-//		}
+		 while(newDate.before(date)||newDate.equals(date))
+		 {
+			 String new_date=formatter.format(newDate);
+			 String format_current_date=formatter.format(date);
+			 String getTotalHoursByDate="SELECT  employee.id, employee.firstname, daily_attendance.clock_in_date, daily_attendance.total_hours_minutes FROM employee INNER JOIN daily_attendance ON employee.id = daily_attendance.id WHERE   employee.id= '"+employeee_id+"' and clock_in_date='"+new_date+"' and flag='X';";		 
+			 res = stmt.executeQuery(getTotalHoursByDate);
+			 while(res.next())
+			 { 
+				 int temp_emp_id=res.getInt("id");
+				 String temp_first_name=res.getString("firstname");
+				 String temp_clock_in_date=res.getString("clock_in_date");
+				 String temp_tthm=res.getString("total_hours_minutes");
+				 String ing =temp_emp_id+","+temp_first_name+","+temp_clock_in_date+","+temp_tthm;  
+				 row = ing.split(",");	
+				 viewHistorymodel.addRow(row);
+			 }
+			 newDate=incrementDayByOne(newDate,dayByOne);
+		}
 		
 	 }
-	 public String calculateTotalHoursMinutesWorkedOnADay(int temp_emp_id, String temp_emp_firstname,String temp_clock_in_date, String total_hours_minutes) throws SQLException 
+	 public String calculateTotalHoursMinutesWorkedOnADay(int temp_emp_id, String temp_emp_firstname,String temp_clock_in_date,String end_date) throws SQLException 
 	 {
-		 String fetchTotalHoursWorked="select total_hours_minutes from daily_attendance where '"+temp_emp_id+"' and clock_in_date='"+temp_clock_in_date+"' and flag='X'";
+		 String fetchTotalHoursWorked="select total_hours_minutes from daily_attendance where id= '"+temp_emp_id+"' and clock_in_date and clock_out_date between '"+temp_clock_in_date+"' and '"+end_date+"' and flag='X'";
 		 res = stmt.executeQuery(fetchTotalHoursWorked);
 		 ArrayList<String> timestampsList = new ArrayList<String>();
 		 while(res.next()){
@@ -210,11 +244,9 @@ public class ViewHistoryGUI extends JFrame {
 	        long mm = tm / 60;
 	        tm %= 60;
 	        long ss = tm;
-	        System.out.println("Date"+temp_clock_in_date+"  "+format(hh) + ":" + format(mm));
 	        String total=String.valueOf(hh)+":"+String.valueOf(mm);
 	        System.out.println(total);
-	        String updateFlag="update daily_attendance SET flag='D' where id=(select id from employee where firstname='"+temp_emp_id+ "' and clock_in_date='"+temp_clock_in_date+"')";
-    		stmt.executeUpdate(updateFlag);
+	        totalHoursWorkedValueLabel.setText(total);
 	        return total;
 	 }
 	 
