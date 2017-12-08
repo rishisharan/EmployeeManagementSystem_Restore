@@ -18,6 +18,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
@@ -129,9 +130,19 @@ public class AdminDashBoardGUI extends JFrame
 		      setVisible(true);
 		      viewHistoryButton.addActionListener(new ActionListener(){
 		             public void actionPerformed(ActionEvent a) {
-		                  int temp_employee_id=Integer.parseInt(employee_id);
-		                  obj=new ViewHistoryGUI(temp_employee_id);
-		             }
+		                  int temp_employee_id;
+		                  try{
+		                	  temp_employee_id=Integer.parseInt(employee_id);
+		                      obj=new ViewHistoryGUI(temp_employee_id);
+		              		
+		                  }
+		                  catch(NumberFormatException ex){
+		                	 	JOptionPane.showMessageDialog(null,"Please Select an Employee.");
+		                  }
+		                 
+		                  
+		                  
+		               }
 		     });
 		      
 		      table.addMouseListener(new MouseListener(){
