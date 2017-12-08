@@ -133,7 +133,7 @@ public class Database {
 			// http://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
 			int minutes = (int) ((compTimeWorked / (1000*60)) % 60);
 			int hours   = (int) ((compTimeWorked / (1000*60*60)) % 24);
-			humanTimeWorked = String.format("%d: %d", hours, minutes);
+			humanTimeWorked = String.format("%d:%d", hours, minutes);
 
     		System.out.println("Clocked out on "+clockOutDate);	
 

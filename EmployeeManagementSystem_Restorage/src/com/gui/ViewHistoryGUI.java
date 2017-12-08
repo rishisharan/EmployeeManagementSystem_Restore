@@ -237,15 +237,20 @@ public class ViewHistoryGUI extends JFrame {
 	          
 	            tm += 60 * Integer.parseInt(arr[1]);
 	            tm += 3600 * Integer.parseInt(arr[0]);
+	            if(tm==0){
+	            	continue;
+	            }
 	        }
 
 	        long hh = tm / 3600;
 	        tm %= 3600;
 	        long mm = tm / 60;
 	        tm %= 60;
-	        long ss = tm;
-	        String total=String.valueOf(hh)+":"+String.valueOf(mm);
-	        System.out.println(total);
+	        String hours=String.valueOf(hh);
+	        String min=String.valueOf(mm);
+	        String total = hours+":"+min;
+
+	     //   System.out.println(total);
 	        totalHoursWorkedValueLabel.setText(total);
 	        return total;
 	 }
