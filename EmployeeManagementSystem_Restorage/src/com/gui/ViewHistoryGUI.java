@@ -20,16 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import com.database.Database;
@@ -38,10 +28,6 @@ import java.awt.*;
 
 public class ViewHistoryGUI extends JFrame {
 
-	private void printAllHistory() {
-		// TODO Auto-generated method stub
-		
-	}
 	JLabel fromDateLabel,endDateLabel,totalHoursWorkedLabel,totalHoursWorkedValueLabel;
 	JTextField fromDateField,endDateField;
 	JButton searchButton;
@@ -56,6 +42,7 @@ public class ViewHistoryGUI extends JFrame {
     Statement stmt;
     PreparedStatement preStatement;
     ResultSet res;
+ 
 	public ViewHistoryGUI(int employee_id)
 	{
 	    super("View History DashBoard");
