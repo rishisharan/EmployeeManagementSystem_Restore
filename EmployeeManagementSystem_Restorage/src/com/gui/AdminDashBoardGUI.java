@@ -33,7 +33,7 @@ public class AdminDashBoardGUI extends JFrame
 		Connection con;
 		Statement stmt;
 		PreparedStatement preStatement,updatePreStmt;
-		JButton exitButton,viewHistoryButton;
+		JButton exitButton,viewHistoryButton,deleteEmployeeButton;
 	    JButton refresh;
 		JPanel panel;
 		JTable table;
@@ -75,6 +75,9 @@ public class AdminDashBoardGUI extends JFrame
 		      viewHistoryButton = new JButton("View History");
 		      viewHistoryButton.setBounds(50, 50, 150, 30);
 		      
+		      // Defining Delete Button
+		      deleteEmployeeButton = new JButton("Delete Employee");
+		      deleteEmployeeButton.setBounds(50, 90, 150, 30);
 		    
 		
 		     
@@ -92,7 +95,8 @@ public class AdminDashBoardGUI extends JFrame
 		      refresh = new JButton("Refresh Table");
 		      refresh.setBounds(350, 350, 270, 15);
 		      add(refresh);
-		
+		      add(deleteEmployeeButton);
+				
 		      //Defining Model for table
 		      model = new DefaultTableModel();
 		
@@ -145,6 +149,51 @@ public class AdminDashBoardGUI extends JFrame
 		               }
 		     });
 		      
+		      deleteEmployeeButton.addActionListener(new ActionListener(){
+		             public void actionPerformed(ActionEvent a) {
+		                  int temp_employee_id;
+		                  try{
+		                	  temp_employee_id=Integer.parseInt(employee_id);
+		                      int response = JOptionPane.showConfirmDialog(null, "Do you want to Delete?", "Confirm",
+		                    	        JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+		                    	    if (response == JOptionPane.NO_OPTION) {
+		                    	      System.out.println("No button clicked");
+		                    	    } else if (response == JOptionPane.YES_OPTION) {
+		                    	      System.out.println("Yes button clicked");
+		                    	      try {
+										deleteEmployeeFrom(temp_employee_id);
+									} catch (SQLException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+		                    	    } 
+		                  }
+		                  catch(NumberFormatException ex){
+		                	 	JOptionPane.showMessageDialog(null,"Please Select an Employee.");
+		                  }
+		                 
+		                  
+		                  
+		               }
+		     });
+		      
+		      
+		      refresh.addActionListener(new ActionListener(){
+		             public void actionPerformed(ActionEvent a) {
+		            	 try {
+		            		 int rows = model.getRowCount();	
+		            			for(int i = rows - 1; i >=0; i--)
+		            			 {
+		            				 model.removeRow(i); 
+		            			 }
+							loadRecords();
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+		               }
+		     });
+		      
 		      table.addMouseListener(new MouseListener(){
                   public void mouseClicked(MouseEvent arg0){ 
                         //Getting Selected Row No
@@ -191,5 +240,10 @@ public class AdminDashBoardGUI extends JFrame
 		              System.out.print(e.getMessage());
 		        }
 		 }
+		 
+		  public void deleteEmployeeFrom(int employee_id) throws SQLException{
+			  String deleteEmployeeId="DELETE  employee,daily_attendance from employee inner join  daily_attendance on employee.id=daily_attendance.id where employee.id='"+employee_id+"'";
+			  stmt.executeUpdate(deleteEmployeeId);
+		  }
 
 }
