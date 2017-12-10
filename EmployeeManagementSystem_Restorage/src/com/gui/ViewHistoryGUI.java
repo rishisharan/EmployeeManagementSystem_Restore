@@ -42,7 +42,8 @@ public class ViewHistoryGUI extends JFrame {
     Statement stmt;
     PreparedStatement preStatement;
     ResultSet res;
- 
+ // time format, i.e. 8:42 AM
+    SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
 	public ViewHistoryGUI(int employee_id)
 	{
 	    super("View History DashBoard");
@@ -108,9 +109,9 @@ public class ViewHistoryGUI extends JFrame {
 	
 	      // Defining Column Names on model
 	    
-	      viewHistorymodel.addColumn("ID");
-	      viewHistorymodel.addColumn("First name");
 	      viewHistorymodel.addColumn("Date");
+	      viewHistorymodel.addColumn("Clock_in");
+	      viewHistorymodel.addColumn("Clock_out");
 	      viewHistorymodel.addColumn("Hours worked");
 	     
 	      // Enable Scrolling on table
@@ -164,10 +165,13 @@ public class ViewHistoryGUI extends JFrame {
 		 }
 		while(res.next())
 		 { 
-			 int temp_emp_id=res.getInt("id");
 			 String temp_clock_in_date=res.getString("clock_in_date");
+			 Long temp_clock_in=res.getLong("clock_in_time");
+			 Long temp_clock_out=res.getLong("clock_out_time");
+			 String t_c_in=timeFormat.format(temp_clock_in);
+			 String t_c_out=timeFormat.format(temp_clock_out);
 			 String temp_tthm=res.getString("total_hours_minutes");
-			 String ing =temp_emp_id+","+temp_first_name+","+temp_clock_in_date+","+temp_tthm;  
+			 String ing =temp_clock_in_date+","+t_c_in+","+t_c_out+","+temp_tthm;  
 			 row = ing.split(",");	
 			 viewHistorymodel.addRow(row);
 		 }
@@ -190,18 +194,23 @@ public class ViewHistoryGUI extends JFrame {
 		 {
 			 String new_date=formatter.format(newDate);
 			 String format_current_date=formatter.format(date);
-			 String getTotalHoursByDate="SELECT  employee.id, employee.firstname, daily_attendance.clock_in_date, daily_attendance.total_hours_minutes FROM employee INNER JOIN daily_attendance ON employee.id = daily_attendance.id WHERE   employee.id= '"+employeee_id+"' and clock_in_date='"+new_date+"' and flag='X';";		 
+			 String getTotalHoursByDate="SELECT  employee.id, employee.firstname, daily_attendance.clock_in_date, daily_attendance.clock_in_time,daily_attendance.clock_out_time,daily_attendance.total_hours_minutes FROM employee INNER JOIN daily_attendance ON employee.id = daily_attendance.id WHERE   employee.id= '"+employeee_id+"' and clock_in_date='"+new_date+"' and flag='X';";		 
 			 res = stmt.executeQuery(getTotalHoursByDate);
 			 while(res.next())
 			 { 
-				 int temp_emp_id=res.getInt("id");
-				 String temp_first_name=res.getString("firstname");
 				 String temp_clock_in_date=res.getString("clock_in_date");
+				 Long temp_clock_in=res.getLong("clock_in_time");
+				 Long temp_clock_out=res.getLong("clock_out_time");
 				 String temp_tthm=res.getString("total_hours_minutes");
-				 String ing =temp_emp_id+","+temp_first_name+","+temp_clock_in_date+","+temp_tthm;  
+				 String t_c_in=timeFormat.format(temp_clock_in);
+				 String t_c_out=timeFormat.format(temp_clock_out);
+				 
+				 String ing =temp_clock_in_date+","+t_c_in+","+t_c_out+","+temp_tthm;  
 				 row = ing.split(",");	
 				 viewHistorymodel.addRow(row);
 			 }
+			 
+			 
 			 newDate=incrementDayByOne(newDate,dayByOne);
 		}
 		
