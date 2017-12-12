@@ -10,6 +10,8 @@ import java.sql.*;
 
 import javax.swing.*;
 
+import com.database.SQLiteConnection;
+
 public class RegisterGUI {
 
 	
@@ -270,15 +272,15 @@ public class RegisterGUI {
 		}
 	}
 	public void connect() throws ClassNotFoundException, SQLException{
-		Class.forName("com.mysql.jdbc.Driver");
-		con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employeems","root","system");
+		
+		con = SQLiteConnection.dbConnectorForSQLite();
 		stmt = con.createStatement();	
 	}
 	public boolean checkIfUserNameIsInUse(String firstname) throws SQLException{
 		
 		String checkIfUserNameIsInUse="select firstname from employee where firstname='"+firstname+"'";
     	res = stmt.executeQuery(checkIfUserNameIsInUse);
-    	if(res.first()){
+    	if(res.next()){
 		return true;
     	}
     	return false;
