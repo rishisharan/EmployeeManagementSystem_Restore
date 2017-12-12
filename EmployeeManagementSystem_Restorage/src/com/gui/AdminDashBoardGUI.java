@@ -1,5 +1,6 @@
 package com.gui;
 import java.awt.*; 
+
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -26,14 +27,27 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+ 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.*;
 import com.database.Database;
+import com.itextpdf.*;
 public class AdminDashBoardGUI extends JFrame
 {
 
 		Connection con;
 		Statement stmt;
 		PreparedStatement preStatement,updatePreStmt;
-		JButton exitButton,viewHistoryButton,deleteEmployeeButton;
+		JButton exitButton,viewHistoryButton,deleteEmployeeButton,generatePDFButton;
 	    JButton refresh;
 		JPanel panel;
 		JTable table;
@@ -80,7 +94,12 @@ public class AdminDashBoardGUI extends JFrame
 		      deleteEmployeeButton.setBounds(50, 90, 150, 30);
 		    
 		
-		     
+
+		      // Defining Delete Button
+		      generatePDFButton = new JButton("Generate PDF");
+		      generatePDFButton.setBounds(50, 130, 150, 30);
+		    
+		 
 		    
 		      add(viewHistoryButton);
 		  
@@ -96,7 +115,8 @@ public class AdminDashBoardGUI extends JFrame
 		      refresh.setBounds(350, 350, 270, 15);
 		      add(refresh);
 		      add(deleteEmployeeButton);
-				
+			  add(generatePDFButton);
+			  
 		      //Defining Model for table
 		      model = new DefaultTableModel();
 		
@@ -193,6 +213,14 @@ public class AdminDashBoardGUI extends JFrame
 						}
 		               }
 		     });
+		      
+		      generatePDFButton.addActionListener(new ActionListener(){
+		             public void actionPerformed(ActionEvent a) {
+		            	 
+		            	}
+		             
+		     });
+		      
 		      
 		      table.addMouseListener(new MouseListener(){
                   public void mouseClicked(MouseEvent arg0){ 
