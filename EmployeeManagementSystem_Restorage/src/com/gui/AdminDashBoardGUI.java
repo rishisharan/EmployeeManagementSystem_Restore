@@ -40,6 +40,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.*;
 import com.database.Database;
+import com.database.SQLiteConnection;
 import com.itextpdf.*;
 public class AdminDashBoardGUI extends JFrame
 {
@@ -63,7 +64,7 @@ public class AdminDashBoardGUI extends JFrame
 	    Object[] row = null;
 	    Database db;
 	    String employee_id;
-		public AdminDashBoardGUI() 
+		public AdminDashBoardGUI() throws SQLException 
 		{
 				// TODO Auto-generated constructor stub
 		      super("Admin DashBoard");
@@ -71,19 +72,10 @@ public class AdminDashBoardGUI extends JFrame
 		      setLayout(null);	      
 		      // Defining Labels 
 		      connect();
-		     
-
-		      
-		      
-		             
-		
-		      
-		
-		      
+      
 		      // Defining Exit Button
 		      exitButton = new JButton("Exit"); 
 		      exitButton.setBounds(25, 250, 80, 25);            
-		
 		    
 		      // Defining Update Button
 		      viewHistoryButton = new JButton("View History");
@@ -92,15 +84,11 @@ public class AdminDashBoardGUI extends JFrame
 		      // Defining Delete Button
 		      deleteEmployeeButton = new JButton("Delete Employee");
 		      deleteEmployeeButton.setBounds(50, 90, 150, 30);
-		    
-		
 
 		      // Defining Delete Button
 		      generatePDFButton = new JButton("Generate PDF");
 		      generatePDFButton.setBounds(50, 130, 150, 30);
-		    
-		 
-		    
+	    
 		      add(viewHistoryButton);
 		  
 		      // Defining Panel
@@ -258,15 +246,17 @@ public class AdminDashBoardGUI extends JFrame
 	               model.addRow(row);
 	         }
 	    }
-		 public void connect(){
-		        try{
-		              Class.forName("com.mysql.jdbc.Driver");
-		              con =DriverManager.getConnection(
-		                              "jdbc:mysql://localhost:3306/employeems","root","system");
-		              stmt = con.createStatement();
-		        }catch(Exception e){
-		              System.out.print(e.getMessage());
-		        }
+		 public void connect() throws SQLException{
+//		        try{
+//		              Class.forName("com.mysql.jdbc.Driver");
+//		              con =DriverManager.getConnection(
+//		                              "jdbc:mysql://localhost:3306/employeems","root","system");
+//		              stmt = con.createStatement();
+//		        }catch(Exception e){
+//		              System.out.print(e.getMessage());
+//		        }
+				con = SQLiteConnection.dbConnectorForSQLite();
+				 stmt = con.createStatement();
 		 }
 		 
 		  public void deleteEmployeeFrom(int employee_id) throws SQLException{

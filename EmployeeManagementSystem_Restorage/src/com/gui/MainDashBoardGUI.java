@@ -22,7 +22,7 @@ public class MainDashBoardGUI {
     JPasswordField passwordTextBox;
     JButton clockInClockOutButton;
 	
-	Connection con;
+
     Statement stmt;
     PreparedStatement preStatement;
     MainController mainController;
@@ -90,6 +90,7 @@ public class MainDashBoardGUI {
              public void actionPerformed(ActionEvent a) {
                    // calling method resetFields()
                    new AdminLoginGUI();
+            	 System.out.println("AAA");
              }
          });
          register.addActionListener(new ActionListener(){

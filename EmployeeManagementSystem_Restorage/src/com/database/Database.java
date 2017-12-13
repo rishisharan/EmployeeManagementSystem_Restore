@@ -8,10 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
-public class Database {
-
+public class Database 
+{
 	public Connection conn;
-    private PreparedStatement statement;
+    private PreparedStatement prepStatement;
     Statement stmt = null;
     public static Database db;
     ResultSet res;
@@ -23,141 +23,139 @@ public class Database {
 
 	// time format, i.e. 8:42 AM
     SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
-    
     public Database() {
-		// TODO Auto-generated constructor stub
-		String url= "jdbc:mysql://localhost:3306/";
-        String dbName = "employeems";
-        String driver = "com.mysql.jdbc.Driver";
-        String userName = "root";
-        String password = "system";
+		
         try {
-            Class.forName(driver).newInstance();
-            conn = (Connection)DriverManager.getConnection(url+dbName,userName,password);
+            conn = SQLiteConnection.dbConnectorForSQLite();
             stmt = conn.createStatement();
-            statement = conn.prepareStatement("select * from employee where firstname=? and password=?");
+            
+            //statement = conn.prepareStatement("select * from employee where firstname=? and password=?");
             
         }
         catch (Exception sqle) {
             sqle.printStackTrace();
         }
 	}
-    /**
-     *
-     * @return MysqlConnect Database connection object
-     */
-    public static synchronized Database getDbCon() {
-        if ( db == null ) {
-            db = new Database();
-        }
-        return db;
- 
-    }
-    public  boolean authenticateUser(String username,String password) throws SQLException{
-
-    	
-    	 statement.setString(1, username); 
-    	 statement.setString(2, password); 
-    	res = statement.executeQuery();
-     	if(res.next()){
-     		
+	public  boolean authenticateUser(String username,String password) throws SQLException
+	{    	
+		String sql="select * from employee where firstname=? and password=?";
+		prepStatement = conn.prepareStatement(sql); 
+		prepStatement.setString(1, username); 
+		prepStatement.setString(2, password); 
+         res = prepStatement.executeQuery();
+     	 if(res.next())
+     	 {	
      		clockIn(username);
      		return true;
-     	}
-        else{
-        	
+     	 }
+         else
+         {	
         	return false;
-        }
+         }
 	}
-    public void clockIn(String username2) throws SQLException
-    {
-    	statement.setString(1, username2); 
-    	
-    	if(checkIfAlreadyClockedIn(username2)==true){
-    		
+	public void clockIn(String username2) throws SQLException
+	{
+		prepStatement.setString(1, username2);     	
+	    	if(checkIfAlreadyClockedIn(username2)==true)
+	    	{
+	    		clockOutTime=System.currentTimeMillis();
+	            LocalDate localDate = LocalDate.now();
+	            clockOutDate=DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
+	    		String clockOutnow="update daily_attendance SET flag='O', clock_out_date='"+clockOutDate+"' , clock_out_time='"+clockOutTime+"' where id=(select id from employee where firstname='"+username2+ "' and flag='N')";
+	    		prepStatement = conn.prepareStatement(clockOutnow); 
+	    		prepStatement.executeUpdate();
+	    		String getClockOutTime="select clock_out_time from daily_attendance where id=(select id from employee where firstname='"+username2+ "' and flag='O')";
+	    		res=stmt.executeQuery(getClockOutTime);
+	    		if(res.next())
+	    		{
+	        		Long temp_flag = res.getLong("clock_out_time");
+	        		System.out.println("Clocked out at "+timeFormat.format(temp_flag));	
+	        		    		
+	    		}
+	    		calculateTotalHoursMinutes(username2);
+	    	}
+	    	else
+	    	{
+	    		clockInTime=System.currentTimeMillis();
+	    		 LocalDate localDate = LocalDate.now();
+		         String clockInDate=DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
+	    		String clockInnow="insert into daily_attendance(id,clock_in_date,clock_in_time,flag) values ((select id from employee where firstname='"+username2+"'),'"+clockInDate+"','"+clockInTime+"','N')";
+	    		prepStatement=conn.prepareStatement(clockInnow);
+	    		prepStatement.executeUpdate();
+//	    		statement.executeQuery(clockInnow);
+	        	String getClockInTime="select clock_in_time,clock_in_date from daily_attendance where id=(select id from employee where firstname='"+username2+ "' and flag='N')";
+//	    		res=statement.executeQuery(getClockInTime);
+	        	stmt.executeQuery(getClockInTime);
 
-    		clockOutTime=System.currentTimeMillis();
-            LocalDate localDate = LocalDate.now();
-            clockOutDate=DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
-    		String clockOutnow="update daily_attendance SET flag='O', clock_out_date='"+clockOutDate+"' , clock_out_time='"+clockOutTime+"' where id=(select id from employee where firstname='"+username2+ "' and flag='N')";
-    		statement.executeUpdate(clockOutnow);
-    		String getClockOutTime="select clock_out_time from daily_attendance where id=(select id from employee where firstname='"+username2+ "' and flag='O')";
-    		res=statement.executeQuery(getClockOutTime);
-    		if(res.first())
-    		{
-        		Long temp_flag = res.getLong("clock_out_time");
-        		System.out.println("Clocked out at "+timeFormat.format(temp_flag));	
-        		    		
-    		}
-    		calculateTotalHoursMinutes(username2);
-    	}
-    	else{
-    		clockInTime=System.currentTimeMillis();
-    		String clockInnow="insert into daily_attendance(id,clock_in_date,clock_in_time,flag) values ((select id from employee where firstname='"+username2+"'),now(),'"+clockInTime+"','N')";
-        	int result = statement.executeUpdate(clockInnow);
-        	String getClockInTime="select clock_in_time,clock_in_date from daily_attendance where id=(select id from employee where firstname='"+username2+ "' and flag='N')";
-    		res=statement.executeQuery(getClockInTime);
-    		if(res.first()){
-        		Long temp_getClockInTime = res.getLong("clock_in_time");
-        		Date temp_getClockInDate=res.getDate("clock_in_date");
-        		System.out.println("Clocked In on "+temp_getClockInDate);		
-        		System.out.println("Clocked In at "+timeFormat.format(temp_getClockInTime));	
-        		    		
-    		}
-    	}
-    }
-    public String calculateTotalHoursMinutes(String uname) throws SQLException
-    {
-    	String getClockInOutDetails="select * from daily_attendance where id=(select id from employee where firstname='"+uname+"' and flag='O')";
-    	res = stmt.executeQuery(getClockInOutDetails);
-    	long compStartTimes;
-    	long compEndTimes;
-    	long compTimeWorked;
-    	String humanTimeWorked;
-    	if(res.first()){
-    		
-    		String clockInDate = res.getString("clock_in_date");
+	    		if(res.next())
+	    		{
+	        		Long temp_getClockInTime = res.getLong("clock_in_time");
+	        		Date temp_getClockInDate=res.getDate("clock_in_date");
+	        		System.out.println("Clocked In on "+temp_getClockInDate);		
+	        		System.out.println("Clocked In at "+timeFormat.format(temp_getClockInTime));	
+	        		    		
+	    		}
+	    		conn.close();
+	    	}
+	    }
+	 public boolean checkIfAlreadyClockedIn(String username3) throws SQLException
+	 {
+	    	
+	    	String checkIfAlreadyClockedIn="select * from daily_attendance where id=(select id from employee where firstname='"+username3+"' and flag='N')";
+	    	
+	    	res = stmt.executeQuery(checkIfAlreadyClockedIn);
+//	    	System.out.println("Used"+res.first());
+	    	if(res.next()){
+	    		String flag = res.getString("flag");    		
+	    		if(flag.equals("N")){
+	    			return true;
 
-    		Long clockInTime = res.getLong("clock_in_time");
-    		
-    		String clockOutDate = res.getString("clock_out_date");
-    		Long clockOutTime = res.getLong("clock_out_time");
-    		String updateFlag="update daily_attendance SET  clock_out_date='"+clockOutDate+"' , clock_out_time='"+clockOutTime+"' where id=(select id from employee where firstname='"+uname+ "' and flag='O')";
-    		statement.executeUpdate(updateFlag);
-    		
-    		compEndTimes=clockOutTime;
-    		compStartTimes=clockInTime;
-			// calculates time worked in milliseconds: end time - start time, and stores it at the corresponding position in compTimeWorked array
-			compTimeWorked = compEndTimes - compStartTimes;
-			// formats this number of milliseconds into hours and minutes, and stores it at the corresponding position in humanTimeWorked array
-			// http://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
-			int minutes = (int) ((compTimeWorked / (1000*60)) % 60);
-			int hours   = (int) ((compTimeWorked / (1000*60*60)) % 24);
-			humanTimeWorked = String.format("%d:%d", hours, minutes);
+	    		}
+	     	}
+	     	return false;
+	 }
+	 	public String calculateTotalHoursMinutes(String uname) throws SQLException
+	    {
+	    	String getClockInOutDetails="select * from daily_attendance where id=(select id from employee where firstname='"+uname+"' and flag='O')";
+	    	res = stmt.executeQuery(getClockInOutDetails);
+	    	long compStartTimes;
+	    	long compEndTimes;
+	    	long compTimeWorked;
+	    	String humanTimeWorked;
+	    	if(res.next())
+	    	{
+	    		
+	    		String clockInDate = res.getString("clock_in_date");
 
-    		System.out.println("Clocked out on "+clockOutDate);	
+	    		Long clockInTime = res.getLong("clock_in_time");
+	    		
+	    		String clockOutDate = res.getString("clock_out_date");
+	    		Long clockOutTime = res.getLong("clock_out_time");
+	    		String updateFlag="update daily_attendance SET  clock_out_date='"+clockOutDate+"' , clock_out_time='"+clockOutTime+"' where id=(select id from employee where firstname='"+uname+ "' and flag='O')";
+	    		prepStatement = conn.prepareStatement(updateFlag); 
+	    		prepStatement.executeUpdate();
+//	    		prepStatement.executeUpdate(updateFlag);
+	    		
+	    		compEndTimes=clockOutTime;
+	    		compStartTimes=clockInTime;
+				// calculates time worked in milliseconds: end time - start time, and stores it at the corresponding position in compTimeWorked array
+				compTimeWorked = compEndTimes - compStartTimes;
+				// formats this number of milliseconds into hours and minutes, and stores it at the corresponding position in humanTimeWorked array
+				// http://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
+				int minutes = (int) ((compTimeWorked / (1000*60)) % 60);
+				int hours   = (int) ((compTimeWorked / (1000*60*60)) % 24);
+				humanTimeWorked = String.format("%d:%d", hours, minutes);
 
-    		System.out.println("Total hours worked "+humanTimeWorked);	
-    		String saveTotalTimeWorked="update daily_attendance SET flag='X',total_hours_minutes='"+humanTimeWorked+"' where id=(select id from employee where firstname='"+uname+ "' and flag='O')";
-    		statement.executeUpdate(saveTotalTimeWorked);
-    		
-    	}
-    	return null;
-    }
+	    		System.out.println("Clocked out on "+clockOutDate);	
 
-    
-    public boolean checkIfAlreadyClockedIn(String username3) throws SQLException{
-    	
-    	String checkIfAlreadyClockedIn="select * from daily_attendance where id=(select id from employee where firstname='"+username3+"' and flag='N')";
-    	res = stmt.executeQuery(checkIfAlreadyClockedIn);
-    	System.out.println("Used"+res.first());
-    	if(res.first()){
-    		String flag = res.getString("flag");    		
-    		if(flag.equals("N")){
-    			return true;
+	    		System.out.println("Total hours worked "+humanTimeWorked);	
+	    		String saveTotalTimeWorked="update daily_attendance SET flag='X',total_hours_minutes='"+humanTimeWorked+"' where id=(select id from employee where firstname='"+uname+ "' and flag='O')";
+	    		prepStatement = conn.prepareStatement(saveTotalTimeWorked); 
+	    		prepStatement.executeUpdate();
+	    		conn.close();
+	    	}
+	    	return null;
+	    }
+	
 
-    		}
-     	}
-     	return false;
-    }
 }

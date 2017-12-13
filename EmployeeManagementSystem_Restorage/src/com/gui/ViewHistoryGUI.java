@@ -23,6 +23,8 @@ import java.util.GregorianCalendar;
 import javax.swing.table.DefaultTableModel;
 
 import com.database.Database;
+import com.database.SQLiteConnection;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -150,7 +152,8 @@ public class ViewHistoryGUI extends JFrame {
 	      
 
 	}
-	public void fetchRecordsBasedOnDates(String start_date,String end_date,int employeee_id) throws SQLException{
+	public void fetchRecordsBasedOnDates(String start_date,String end_date,int employeee_id) throws SQLException
+	{
 	
 		String fetchBasedOnDates="select * from daily_attendance where id='"+employeee_id+"' and clock_in_date and clock_out_date between '"+start_date+"' and '"+end_date+"'";
 		String getFirstName="select firstname from employee where id='"+employeee_id+"'";
@@ -180,7 +183,7 @@ public class ViewHistoryGUI extends JFrame {
 	}
 	 public void loadRecords() throws SQLException
 	 {
-		 System.out.println("Loading records in view history panel");
+		
 		 //loads records for 30days from current date
 		 Date date = new Date();
 		 System.out.println("current date"+date);
@@ -267,9 +270,10 @@ public class ViewHistoryGUI extends JFrame {
 		}
 	 public void connect(){
 	        try{
-	              Class.forName("com.mysql.jdbc.Driver");
-	              con =DriverManager.getConnection(
-	                              "jdbc:mysql://localhost:3306/employeems","root","system");
+//	              Class.forName("com.mysql.jdbc.Driver");
+//	              con =DriverManager.getConnection(
+//	                              "jdbc:mysql://localhost:3306/employeems","root","system");
+	              con = SQLiteConnection.dbConnectorForSQLite();
 	              stmt = con.createStatement();
 
 	        }catch(Exception e){

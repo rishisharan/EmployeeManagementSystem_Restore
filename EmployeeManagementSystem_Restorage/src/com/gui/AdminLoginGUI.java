@@ -9,6 +9,8 @@ import java.sql.*;
 
 import javax.swing.*;
 
+import com.database.SQLiteConnection;
+
 
 
 public class AdminLoginGUI {
@@ -26,6 +28,7 @@ public class AdminLoginGUI {
     JPanel adminPanel;
     String userName,adminPassword;
 	int count =0;
+	AdminDashBoardGUI ad;
     public AdminLoginGUI() 
 	{
 		
@@ -131,13 +134,14 @@ public class AdminLoginGUI {
 		{
 			if(count==1)
 			{
-				Class.forName("com.mysql.jdbc.Driver");
-				con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employeems","root","system");
+//				Class.forName("com.mysql.jdbc.Driver");
+//				con = DriverManager.getConnection("jdbc:mysql://localhost:3306/employeems","root","system");
+				con = SQLiteConnection.dbConnectorForSQLite();
 				stmt = con.createStatement();
 				String adminLogin="select name,admin_password from admin where name='"+userName+"' and admin_password='"+adminPassword+"'";
 		    	res = stmt.executeQuery(adminLogin);
-		    	if(res.first()){
-		    		new AdminDashBoardGUI();
+		    	if(res.next()){
+		    		ad=new AdminDashBoardGUI();
 		    		JOptionPane.showMessageDialog(null,"Logged in");	
 		    	}else{
 		    		JOptionPane.showMessageDialog(null,"Invalid Id and Password");	
