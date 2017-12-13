@@ -29,7 +29,7 @@ public class Database
             conn = SQLiteConnection.dbConnectorForSQLite();
             stmt = conn.createStatement();
             
-            //statement = conn.prepareStatement("select * from employee where firstname=? and password=?");
+           
             
         }
         catch (Exception sqle) {
@@ -82,9 +82,7 @@ public class Database
 	    		String clockInnow="insert into daily_attendance(id,clock_in_date,clock_in_time,flag) values ((select id from employee where firstname='"+username2+"'),'"+clockInDate+"','"+clockInTime+"','N')";
 	    		prepStatement=conn.prepareStatement(clockInnow);
 	    		prepStatement.executeUpdate();
-//	    		statement.executeQuery(clockInnow);
 	        	String getClockInTime="select clock_in_time,clock_in_date from daily_attendance where id=(select id from employee where firstname='"+username2+ "' and flag='N')";
-//	    		res=statement.executeQuery(getClockInTime);
 	        	stmt.executeQuery(getClockInTime);
 
 	    		if(res.next())
@@ -104,7 +102,6 @@ public class Database
 	    	String checkIfAlreadyClockedIn="select * from daily_attendance where id=(select id from employee where firstname='"+username3+"' and flag='N')";
 	    	
 	    	res = stmt.executeQuery(checkIfAlreadyClockedIn);
-//	    	System.out.println("Used"+res.first());
 	    	if(res.next()){
 	    		String flag = res.getString("flag");    		
 	    		if(flag.equals("N")){
@@ -133,9 +130,7 @@ public class Database
 	    		Long clockOutTime = res.getLong("clock_out_time");
 	    		String updateFlag="update daily_attendance SET  clock_out_date='"+clockOutDate+"' , clock_out_time='"+clockOutTime+"' where id=(select id from employee where firstname='"+uname+ "' and flag='O')";
 	    		prepStatement = conn.prepareStatement(updateFlag); 
-	    		prepStatement.executeUpdate();
-//	    		prepStatement.executeUpdate(updateFlag);
-	    		
+	    		prepStatement.executeUpdate();    		
 	    		compEndTimes=clockOutTime;
 	    		compStartTimes=clockInTime;
 				// calculates time worked in milliseconds: end time - start time, and stores it at the corresponding position in compTimeWorked array

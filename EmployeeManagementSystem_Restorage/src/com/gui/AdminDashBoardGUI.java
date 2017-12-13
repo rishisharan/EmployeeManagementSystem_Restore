@@ -241,27 +241,22 @@ public class AdminDashBoardGUI extends JFrame
 	         while(rst.next()){ 
 	               String string =rst.getInt("id")+","+rst.getString("lastname")+","+rst.getString("firstname")+","+rst.getString("phone")+","+rst.getString("gender");
 	               row = string.split(",");
-
-//	               // Adding records in table model 
+	               // Adding records in table model 
 	               model.addRow(row);
 	         }
 	    }
-		 public void connect() throws SQLException{
-//		        try{
-//		              Class.forName("com.mysql.jdbc.Driver");
-//		              con =DriverManager.getConnection(
-//		                              "jdbc:mysql://localhost:3306/employeems","root","system");
-//		              stmt = con.createStatement();
-//		        }catch(Exception e){
-//		              System.out.print(e.getMessage());
-//		        }
+		 public void connect() throws SQLException
+		 {
+
 				con = SQLiteConnection.dbConnectorForSQLite();
 				 stmt = con.createStatement();
 		 }
 		 
 		  public void deleteEmployeeFrom(int employee_id) throws SQLException{
-			  String deleteEmployeeId="DELETE  employee,daily_attendance from employee inner join  daily_attendance on employee.id=daily_attendance.id where employee.id='"+employee_id+"'";
+			  String deleteEmployeeId="DELETE from employee where id='"+employee_id+"'";
 			  stmt.executeUpdate(deleteEmployeeId);
+			  String deleteEmployeeIdFromAttendance="DELETE from daily_attendance where id='"+employee_id+"'";
+			  stmt.executeUpdate(deleteEmployeeIdFromAttendance);
 		  }
 
 }

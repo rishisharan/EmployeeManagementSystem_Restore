@@ -61,14 +61,14 @@ public class ViewHistoryGUI extends JFrame {
 	      fromDateLabel.setBounds(15, 50, 130, 30);
 	      
 	      // fromDate field
-	      fromDateField = new JTextField("yyyy-mm-d"); 
+	      fromDateField = new JTextField("yyyy/mm/dd"); 
 	      fromDateField.setBounds(95, 50, 130, 30);
 	      
 	
 	      endDateLabel = new JLabel("To Date"); 
 	      endDateLabel.setBounds(15, 85, 130, 30);
 	      // endDateField
-	      endDateField = new JTextField("yyyy-mm-d"); 
+	      endDateField = new JTextField("yyyy/mm/dd"); 
 	      endDateField.setBounds(95, 85, 130, 30);         
 	
 	      //Totallabel
@@ -156,6 +156,7 @@ public class ViewHistoryGUI extends JFrame {
 	{
 	
 		String fetchBasedOnDates="select * from daily_attendance where id='"+employeee_id+"' and clock_in_date and clock_out_date between '"+start_date+"' and '"+end_date+"'";
+		res = stmt.executeQuery(fetchBasedOnDates);
 		String getFirstName="select firstname from employee where id='"+employeee_id+"'";
 		res = stmt.executeQuery(getFirstName);
 		res.next();
@@ -163,11 +164,11 @@ public class ViewHistoryGUI extends JFrame {
 		res = stmt.executeQuery(fetchBasedOnDates);
 		int rows = viewHistorymodel.getRowCount();	
 		for(int i = rows - 1; i >=0; i--)
-		 {
+		{
 			 viewHistorymodel.removeRow(i); 
-		 }
+		}
 		while(res.next())
-		 { 
+		{ 
 			 String temp_clock_in_date=res.getString("clock_in_date");
 			 Long temp_clock_in=res.getLong("clock_in_time");
 			 Long temp_clock_out=res.getLong("clock_out_time");
@@ -270,9 +271,7 @@ public class ViewHistoryGUI extends JFrame {
 		}
 	 public void connect(){
 	        try{
-//	              Class.forName("com.mysql.jdbc.Driver");
-//	              con =DriverManager.getConnection(
-//	                              "jdbc:mysql://localhost:3306/employeems","root","system");
+
 	              con = SQLiteConnection.dbConnectorForSQLite();
 	              stmt = con.createStatement();
 
