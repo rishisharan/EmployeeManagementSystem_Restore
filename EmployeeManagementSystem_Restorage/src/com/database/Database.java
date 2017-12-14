@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+import com.gui.MainDashBoardGUI;
+
 
 public class Database 
 {
@@ -36,7 +38,7 @@ public class Database
             sqle.printStackTrace();
         }
 	}
-	public  boolean authenticateUser(String username,String password) throws SQLException
+	public  boolean authenticateUser(String username,String password,int flag) throws SQLException
 	{    	
 		String sql="select * from employee where firstname=? and password=?";
 		prepStatement = conn.prepareStatement(sql); 
@@ -45,7 +47,7 @@ public class Database
          res = prepStatement.executeQuery();
      	 if(res.next())
      	 {	
-     		clockIn(username);
+     		clockIn(username,flag);
      		return true;
      	 }
          else
@@ -53,7 +55,7 @@ public class Database
         	return false;
          }
 	}
-	public void clockIn(String username2) throws SQLException
+	public void clockIn(String username2,int flag) throws SQLException
 	{
 		prepStatement.setString(1, username2);     	
 	    	if(checkIfAlreadyClockedIn(username2)==true)
@@ -73,6 +75,7 @@ public class Database
 	        		    		
 	    		}
 	    		calculateTotalHoursMinutes(username2);
+	    		MainDashBoardGUI.flag=1;
 	    	}
 	    	else
 	    	{

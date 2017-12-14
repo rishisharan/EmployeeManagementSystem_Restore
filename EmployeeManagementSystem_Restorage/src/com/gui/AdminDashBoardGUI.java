@@ -40,6 +40,7 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.*;
 import com.database.Database;
+import com.database.GeneratePDFReport;
 import com.database.SQLiteConnection;
 import com.itextpdf.*;
 public class AdminDashBoardGUI extends JFrame
@@ -64,6 +65,7 @@ public class AdminDashBoardGUI extends JFrame
 	    Object[] row = null;
 	    Database db;
 	    String employee_id;
+	    GeneratePDFReport pdf;
 		public AdminDashBoardGUI() throws SQLException 
 		{
 				// TODO Auto-generated constructor stub
@@ -204,6 +206,7 @@ public class AdminDashBoardGUI extends JFrame
 		      
 		      generatePDFButton.addActionListener(new ActionListener(){
 		             public void actionPerformed(ActionEvent a) {
+		            	 pdf=new GeneratePDFReport();
 		            	 
 		            	}
 		             

@@ -26,7 +26,8 @@ public class MainDashBoardGUI {
     Statement stmt;
     PreparedStatement preStatement;
     MainController mainController;
-    
+    public static int flag=0;	
+	
 	public MainDashBoardGUI() 
 	{
 		// TODO Auto-generated constructor stub
@@ -38,8 +39,7 @@ public class MainDashBoardGUI {
 		 mainDashBoardFrame.setSize(550,500);
 		 mainDashBoardFrame.show();
 		 mainDashBoardFrame.setResizable(false);
-			
-			
+		 	
 
   
          mainDashBoardFrame.add(employeePanel);
@@ -108,8 +108,13 @@ public class MainDashBoardGUI {
             	 String password = String.valueOf(passwordTextBox.getPassword());
             	 try {
 					mainController=new MainController();
-					if(mainController.checkUser(userNameTextBox.getText(),password)==true){
-					JOptionPane.showMessageDialog(null, "Clocked In/Out");
+					if(mainController.checkUser(userNameTextBox.getText(),password,flag)==true){
+						if(flag==0){
+						JOptionPane.showMessageDialog(null, "Clocked In");
+						}else{
+							JOptionPane.showMessageDialog(null, "Clocked Out");
+							
+						}
 					}
 					else{
 						JOptionPane.showMessageDialog(null, "Invalid User name and Password");	
