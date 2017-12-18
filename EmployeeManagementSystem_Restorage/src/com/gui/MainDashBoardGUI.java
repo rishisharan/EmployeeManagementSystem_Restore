@@ -10,6 +10,7 @@ import java.sql.Statement;
 import javax.swing.*;
 
 import com.controller.MainController;
+import com.database.Database;
 
 public class MainDashBoardGUI {
 
@@ -27,7 +28,7 @@ public class MainDashBoardGUI {
     PreparedStatement preStatement;
     MainController mainController;
     public static int flag=0;	
-	
+	Database db;
 	public MainDashBoardGUI() 
 	{
 		// TODO Auto-generated constructor stub
@@ -125,7 +126,30 @@ public class MainDashBoardGUI {
 				}
              }
        });
-         
+         mainDashBoardFrame.addWindowListener( new WindowAdapter()
+         {
+             public void windowClosing(WindowEvent e)
+             {
+                 JFrame frame = (JFrame)e.getSource();
+          
+                 int result = JOptionPane.showConfirmDialog(
+                     frame,
+                     "Are you sure you want to exit the application?",
+                     "Exit Application",
+                     JOptionPane.YES_NO_OPTION);
+          
+                 if (result == JOptionPane.YES_OPTION)
+                	 
+                     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                     db=new Database();
+                     try {
+						db.deleteRecordsNintyDaysOld();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+             }
+         });
 	}
 	
 	public static void main(String args[]){

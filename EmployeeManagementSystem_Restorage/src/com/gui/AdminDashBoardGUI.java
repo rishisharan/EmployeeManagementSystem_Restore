@@ -90,7 +90,7 @@ public class AdminDashBoardGUI extends JFrame
 		      // Defining Delete Button
 		      generatePDFButton = new JButton("Generate PDF");
 		      generatePDFButton.setBounds(50, 130, 150, 30);
-	    
+		      generatePDFButton.setEnabled(false);
 		      add(viewHistoryButton);
 		  
 		      // Defining Panel

@@ -6,6 +6,9 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import com.gui.MainDashBoardGUI;
 
@@ -154,6 +157,24 @@ public class Database
 	    	}
 	    	return null;
 	    }
+	public void deleteRecordsNintyDaysOld() throws SQLException{
+		Date date = new Date();
 	
+		Date newDate = subtractDays(date);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+		String new_date=formatter.format(newDate);
+
+		
+		String delete90DaysRecord="delete from daily_attendance where clock_in_date='"+new_date+"'";		 
+		stmt.executeUpdate(delete90DaysRecord);
+
+		 stmt.close();
+	}
+	 public static Date subtractDays(Date date) {
+			GregorianCalendar cal = new GregorianCalendar();
+			cal.setTime(date);
+			cal.add(Calendar.DATE, -90);	
+			return cal.getTime();
+		}
 
 }
