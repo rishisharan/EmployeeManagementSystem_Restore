@@ -14,16 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -67,7 +57,7 @@ public class AdminDashBoardGUI extends JFrame
 		JScrollPane scrollpane;
 		ViewHistoryGUI obj;
 		
-	    ResultSet rst,rstLast,rt;
+	    ResultSet rst,rstLast;
 	    Object[][] data;
 	    int serialNo; 
 	    String SHOW = "Show";
@@ -76,7 +66,6 @@ public class AdminDashBoardGUI extends JFrame
 	    Database db;
 	    String employee_id;
 	    GeneratePDFReport pdf;
-	    ArrayList<String> timestampsList = new ArrayList<String>();
 		public AdminDashBoardGUI() throws SQLException 
 		{
 				// TODO Auto-generated constructor stub
@@ -101,7 +90,6 @@ public class AdminDashBoardGUI extends JFrame
 		      // Defining Delete Button
 		      generatePDFButton = new JButton("Generate PDF");
 		      generatePDFButton.setBounds(50, 130, 150, 30);
-		      generatePDFButton.setEnabled(false);
 	    
 		      add(viewHistoryButton);
 		  
@@ -218,12 +206,6 @@ public class AdminDashBoardGUI extends JFrame
 		      
 		      generatePDFButton.addActionListener(new ActionListener(){
 		             public void actionPerformed(ActionEvent a) {
-		            	 try {
-							generateData();
-						} catch (SQLException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
 		            	 pdf=new GeneratePDFReport();
 		            	 
 		            	}
@@ -279,96 +261,5 @@ public class AdminDashBoardGUI extends JFrame
 			  String deleteEmployeeIdFromAttendance="DELETE from daily_attendance where id='"+employee_id+"'";
 			  stmt.executeUpdate(deleteEmployeeIdFromAttendance);
 		  }
-			 public static Date subtractDays(String date, int days) throws ParseException {
-					
-				 
-				 	GregorianCalendar cal = new GregorianCalendar();
-				 	Date date1=new SimpleDateFormat("yyyy/MM/dd").parse(date);
-					cal.setTime(date1);
-					cal.add(Calendar.DATE, -days);
-							
-					return cal.getTime();
-				}
-		  public void generateData() throws SQLException
-		  {
-			  String eeid=null;
-			  String tthm=null;
-			  ArrayList<Integer> e_id_list = new ArrayList<>();
-			  DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
-			  	LocalDate localDate = LocalDate.now();
-	            String sDate=DateTimeFormatter.ofPattern("yyy/MM/dd").format(localDate);
-	            System.out.println("Current date "+sDate);
-	   		 	Date newDate = null;
-	   		 
-				try {
-					newDate = subtractDays(sDate, 15);
-				} catch (ParseException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				String nDate=df.format(newDate);
-	   		 	System.out.println("newDate 15 days before "+nDate);
-	   		
-	            String getEmployeeById="SELECT employee.id,employee.firstname,daily_attendance.total_hours_minutes FROM employee LEFT JOIN daily_attendance on employee.id=daily_attendance.id and clock_in_date between '"+sDate+"' and '"+nDate+"'";
-					rst = stmt.executeQuery(getEmployeeById);
-					while(rst.next())
-					{
-						e_id_list.add(rst.getInt("id"));
-						String eid=rst.getString(1);
-						String e_fname=rst.getString(2);
-						String e_tthm=rst.getString(3);
-
-						int employeeId=Integer.parseInt(eid);
-						System.out.println(employeeId+","+e_fname+","+e_tthm);
-						
-
-				    }
-					for (int tmp : e_id_list){
-			            System.out.println("g"+tmp);
-			     }
-					
-					
-			}
-			public void calculateTotalTimeForEachEmployee(int employeeId,String current_date,String days_before_date) throws SQLException
-			{
-				String getTotalHours="SELECT id,firstname FROM employee";
-	
-				rst = stmt.executeQuery(getTotalHours);
-				while(rst.next())
-				{
-					
-//					
-//					 while(rst.next())
-//					 {
-//						 timestampsList.add(rst.getString("total_hours_minutes"));						 
-//					 }
-//					 for (String tmp : timestampsList){
-//				            System.out.print("Time worked"+tmp);
-//				     }
-//					 long tm = 0;
-//				        for (String tmp : timestampsList){
-//				            String[] arr = tmp.split(":");
-//				          
-//				            tm += 60 * Integer.parseInt(arr[1]);
-//				            tm += 3600 * Integer.parseInt(arr[0]);
-//				            if(tm==0){
-//				            	continue;
-//				            }
-//				        }
-//
-//				        long hh = tm / 3600;
-//				        tm %= 3600;
-//				        long mm = tm / 60;
-//				        tm %= 60;
-//				        String hours=String.valueOf(hh);
-//				        String min=String.valueOf(mm);
-//				        String total = hours+":"+min;
-//
-//				        System.out.println("total time"+total);
-//				        
-				}
-				
-			}
-
 
 }
