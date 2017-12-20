@@ -61,17 +61,18 @@ public class ViewHistoryGUI extends JFrame {
 	      fromDateLabel.setBounds(15, 50, 130, 30);
 	      
 	      // fromDate field
-	      fromDateField = new JTextField("yyyy/mm/dd"); 
+	      fromDateField = new JTextField(); 
 	      fromDateField.setBounds(95, 50, 130, 30);
-	      
+	      fromDateField.setUI(new JTextFieldHintUI("yyyy/mm/dd", Color.gray)); 
 	
 	      endDateLabel = new JLabel("To Date"); 
 	      endDateLabel.setBounds(15, 85, 130, 30);
 	      // endDateField
-	      endDateField = new JTextField("yyyy/mm/dd"); 
+	      endDateField = new JTextField(); 
+	      endDateField.setUI(new JTextFieldHintUI("yyyy/mm/dd", Color.gray));  
 	      endDateField.setBounds(95, 85, 130, 30);         
 	
-	      //Totallabel
+	      //Total label
 	      totalHoursWorkedLabel = new JLabel("Total Hours Worked:"); 
 	      totalHoursWorkedLabel.setBounds(15, 155, 130, 30);
 	      totalHoursWorkedValueLabel = new JLabel(); 
@@ -137,16 +138,21 @@ public class ViewHistoryGUI extends JFrame {
 	      searchButton.addActionListener(new ActionListener(){
 	             public void actionPerformed(ActionEvent a) {
 	                   // calling method resetFields()
-	            	 
+	            	 int temp=0;
 	            	 String start_date=fromDateField.getText();
 	            	 String end_date=endDateField.getText();
+	            	 if(start_date.equals("")||end_date.equals("")){
+	            			JOptionPane.showMessageDialog(null, "Please Enter Start and Till date");
+	            			temp=1;
+	            	 }
+	            	 else if(temp==0){
 	            	 try {
 						fetchRecordsBasedOnDates(start_date,end_date,employeee_id);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-	                  
+	            	 }
 	             }
 	     });
 	      

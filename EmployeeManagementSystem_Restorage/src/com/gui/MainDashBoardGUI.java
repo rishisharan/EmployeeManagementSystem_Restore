@@ -112,8 +112,9 @@ public class MainDashBoardGUI {
 					if(mainController.checkUser(userNameTextBox.getText(),password,flag)==true){
 						if(flag==0){
 						JOptionPane.showMessageDialog(null, "Clocked In");
-						}else{
+						}else if(flag==1){
 							JOptionPane.showMessageDialog(null, "Clocked Out");
+							flag=0;
 							
 						}
 					}
